@@ -25,12 +25,8 @@ def facial_landmarks(img):
     # loading dlib's 68 points-shape-predictor
     landmark_predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
-    # convert to grayscale for better efficiency and reshape
-    n = img.shape[0]
-    m = img.shape[1]
-    if n>200 and m>200:
-        img_gray = resize(img, (400,400))
-    img_gray = rgb2gray(img_gray)
+    # convert to grayscale for better efficiency
+    img_gray = rgb2gray(img)
     img_gray = img_as_ubyte(img_gray)
 
     # detecting faces
@@ -55,11 +51,6 @@ def facial_landmarks(img):
             points[i,0] = points[i,1]
             points[i,1] = tmp
 
-        # rescale points
-        if n>200 and m>200:
-            for i in range(0,l):
-                points[i,0] = (n/400)*points[i,0]
-                points[i,1] = (m/400)*points[i,1]
 
         return points
     else:

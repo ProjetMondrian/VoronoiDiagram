@@ -14,8 +14,8 @@ from datetime import datetime
 
 
 # Import image
-load_path = os.path.join(os.getcwd(), 'Images', 'women.jpg');
-save_path = os.path.join(os.getcwd(), 'Images', 'exampleresult5.jpg');
+load_path = os.path.join(os.getcwd(), 'Images', 'exampleoriginal.jpg');
+save_path = os.path.join(os.getcwd(), 'Images', 'exampleresult.jpg');
 img = io.imread(load_path)
 
 # Retrieve facial landmarks
