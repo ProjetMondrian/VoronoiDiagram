@@ -11,11 +11,12 @@ import dlib
 import random
 from datetime import datetime
 from skimage.exposure import equalize_adapthist
+from collections import Counter
 
 
 # Import image
-load_path = os.path.join(os.getcwd(), 'Images', 'exampleoriginal2.jpg');
-save_path = os.path.join(os.getcwd(), 'Images', 'exampleresult1.jpg');
+load_path = os.path.join(os.getcwd(), 'Images', 'obamaface.jpg');
+save_path = os.path.join(os.getcwd(), 'Images', 'exampleresult2.jpg');
 img = io.imread(load_path)
 
 # Retrieve facial landmarks
@@ -45,22 +46,22 @@ for region in regions:
 
     # find dominant color using k means clustering
     colors = img[rr, cc]
-    if colors.shape[0]>0:
-        kmeans = KMeans(n_clusters=1, random_state=0).fit(colors)
-        c = kmeans.cluster_centers_
-        r = int(round(c[0,0]))
-        g = int(round(c[0,1]))
-        b = int(round(c[0,2]))
+    kmeans = KMeans(n_clusters=3, random_state=0)
+    labels = kmeans.fit_predict(colors)
+    #count labels to find most popular
+    label_counts = Counter(labels)
+    #subset out most popular centroid
+    dominant_color = kmeans.cluster_centers_[label_counts.most_common(1)[0][0]]
+    r = int(round(dominant_color[0]))
+    g = int(round(dominant_color[1]))
+    b = int(round(dominant_color[2]))
+    # colorize the inside
+    img[rr, cc] = (r, g, b)
 
-        # colorize the inside
-        img[rr, cc] = (r, g, b)
-
-        # colorize the perimeter
-        rr, cc = polygon_perimeter(poly[:, 0], poly[:, 1], img.shape)
-        img[rr, cc] = (0, 0, 0)
-
+    # colorize the perimeter
+    rr, cc = polygon_perimeter(poly[:, 0], poly[:, 1], img.shape)
+    img[rr, cc] = (0, 0, 0)
 
 
 # Increase contrast and save
-img = equalize_adapthist(img, clip_limit=0.25, nbins=512)
 io.imsave(save_path,img)
