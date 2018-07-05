@@ -4,6 +4,7 @@ from skimage.color import rgb2gray
 from skimage import img_as_ubyte
 from skimage.transform import resize
 
+
 # Function for creating landmark coordinate list
 def land2coords(landmarks, dtype="int"):
     # initialize the list of tuples

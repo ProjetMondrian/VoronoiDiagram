@@ -12,11 +12,12 @@ import random
 from datetime import datetime
 from skimage.exposure import equalize_adapthist
 from collections import Counter
+from skimage.color import rgb2lab,lab2rgb
 
 
 # Import image
-load_path = os.path.join(os.getcwd(), 'Images', 'obamaface.jpg');
-save_path = os.path.join(os.getcwd(), 'Images', 'exampleresult2.jpg');
+load_path = os.path.join(os.getcwd(), 'Images', 'falcone.jpg');
+save_path = os.path.join(os.getcwd(), 'Images', 'falconeresult.jpg');
 img = io.imread(load_path)
 
 # Retrieve facial landmarks
@@ -38,6 +39,8 @@ vor = Voronoi(points)
 regions, vertices = voronoi_finite_polygons_2d(vor)
 
 # Colorize the picture
+img = rgb2lab(img) # to lab colorspace
+
 for region in regions:
 
     # find points inside each region
@@ -52,16 +55,18 @@ for region in regions:
     label_counts = Counter(labels)
     #subset out most popular centroid
     dominant_color = kmeans.cluster_centers_[label_counts.most_common(1)[0][0]]
-    r = int(round(dominant_color[0]))
-    g = int(round(dominant_color[1]))
-    b = int(round(dominant_color[2]))
+    x = dominant_color[0]
+    y = dominant_color[1]
+    z = dominant_color[2]
+
     # colorize the inside
-    img[rr, cc] = (r, g, b)
+    img[rr, cc] = (x, y, z)
 
     # colorize the perimeter
     rr, cc = polygon_perimeter(poly[:, 0], poly[:, 1], img.shape)
     img[rr, cc] = (0, 0, 0)
 
 
-# Increase contrast and save
+# Back to rgb and save
+img = lab2rgb(img)
 io.imsave(save_path,img)
