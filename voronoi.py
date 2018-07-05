@@ -10,12 +10,12 @@ from sklearn.cluster import KMeans
 import dlib
 import random
 from datetime import datetime
-
+from skimage.exposure import equalize_adapthist
 
 
 # Import image
-load_path = os.path.join(os.getcwd(), 'Images', 'exampleoriginal.jpg');
-save_path = os.path.join(os.getcwd(), 'Images', 'exampleresult.jpg');
+load_path = os.path.join(os.getcwd(), 'Images', 'exampleoriginal2.jpg');
+save_path = os.path.join(os.getcwd(), 'Images', 'exampleresult1.jpg');
 img = io.imread(load_path)
 
 # Retrieve facial landmarks
@@ -61,5 +61,6 @@ for region in regions:
 
 
 
-# Crop and save
+# Increase contrast and save
+img = equalize_adapthist(img, clip_limit=0.25, nbins=512)
 io.imsave(save_path,img)
